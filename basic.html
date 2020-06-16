@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+      integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+      crossorigin=""
+    />
+    <script
+      src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+      integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+      crossorigin=""
+    ></script>
+
+    <script src="baseline.js"></script>
+
+
+    <style>
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      html,
+      body {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+      }
+
+      #map {
+        flex-shrink: 100;
+        height: 100%;
+      }
+
+      .info {
+        padding: 6px 8px;
+        font: 14px/16px Arial, Helvetica, sans-serif;
+        background: white;
+        background: rgba(255, 255, 255, 0.8);
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        border-radius: 5px;
+      }
+      .info h4 {
+        margin: 0 0 5px;
+        color: #777;
+      }
+      .legend {
+        line-height: 18px;
+        color: #555;
+      }
+      .legend i {
+        width: 18px;
+        height: 18px;
+        float: left;
+        margin-right: 8px;
+        opacity: 0.7;
+      }
+
+      .tabBar {
+        display: flex;
+        align-content: stretch;
+      }
+      @media screen and (max-width: 500px) {
+        .tabBar {
+          flex-direction: column;
+        }
+      }
+      .tabItem {
+        flex-grow: 1;
+        padding: 2px 2px 2px 2px;
+        float: left;
+        border: #aaa solid 1px;
+        cursor: pointer;
+        text-align: center;
+        font-size: 15px;
+        font-weight: normal;
+        color: #ccc;
+      }
+      .tabItem:hover {
+        color: #00007f;
+      }
+      .tabItem.selected {
+        box-shadow: inset 1px 1px 7px -2px #555;
+        color: white;
+        font-weight: 400;
+        border: 1px solid #e34b4b !important;
+        background: #00007f;
+        pointer-events: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="tabBar" id="tabBar">
+      <div id="baseline" class="tabItem selected">Baseline</div>
+      <div id="change_2050_rcp4p5" class="tabItem">2050 RCP 4.5</div>
+      <div id="change_2050_rcp8p5" class="tabItem">2050 RCP 8.5</div>
+      <div id="change_2100_rcp4p5" class="tabItem">2100 RCP 4.5</div>
+      <div id="change_2100_rcp8p5" class="tabItem">2100 RCP 8.5</div>
+    </div>
+    <div id="map"></div>
+
+    <script>
+      var map = L.map("map", { zoomSnap: 0.2 }).fitBounds([
+        [-46.8, -122.4],
+        [60.3, 153]
+      ]);
+
+      var CartoDB_Positron = L.tileLayer(
+        "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+        {
+          attribution:
+            '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+          subdomains: "abcd",
+          maxZoom: 19
+        }
+      ).addTo(map);
+
+      class ColorScale {
+        constructor(name, colors) {
+          this.name = name;
+          this.colors = colors;
+        }
+
+        getColor(v) {
+          // TODO: constructor should check colors are in ascending order
+          return this.colors.filter(x => x.hi >= v)[0].col;
+        }
+
+        createLegend() {
+          var legend = L.control({ position: "bottomright" });
+          var name = this.name;
+          var colors = this.colors.slice(0);
+          // highest values on top
+          colors.reverse();
+
+          legend.onAdd = function(map) {
+            var div = L.DomUtil.create("div", "info legend");
+            div.innerHTML = `<h4>${name}</h4>`;
+            colors.forEach(
+              x =>
+                (div.innerHTML += `<i style="background:${x.col}"></i> ${
+                  x.lo
+                } &ndash; ${x.hi} <br/>`)
+            );
+            return div;
+          };
+          return legend;
+        }
+      }
+
+      var imageUrl = "baseline.png",
+        imageBounds = [[-56, -180], [83, 180]];
+      L.imageOverlay(imageUrl, imageBounds,{opacity:0.6}).addTo(map);
+
+      var exit = L.control({ position: "topright" });
+      exit.onAdd = function(map) {
+        var div = L.DomUtil.create("div", "info legend");
+        div.innerHTML = `
+      <a href="https://josephguillaume.github.io/hydropolitical-interactions/basic.html" target="_blank">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQElEQVR42qXKwQkAIAxDUUdxtO6/RBQkQZvSi8I/pL4BoGw/XPkh4XigPmsUgh0626AjRsgxHTkUThsG2T/sIlzdTsp52kSS1wAAAABJRU5ErkJggg==" />
+      </a>`;
+        return div;
+      };
+      exit.addTo(map);
+    </script>
+  </body>
+</html>
