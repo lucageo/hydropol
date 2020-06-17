@@ -9,6 +9,7 @@
       integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
       crossorigin=""
     />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
     <script
       src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
       integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
@@ -28,6 +29,7 @@
         flex-direction: column;
         height: 100%;
         width: 100%;
+        font-family: 'Montserrat', sans-serif;
       }
 
       #map {
@@ -60,24 +62,24 @@
       }
       .tabItem {
         flex-grow: 1;
-        padding: 2px 2px 2px 2px;
-        float: left;
-        border: #aaa solid 1px;
-        cursor: pointer;
-        text-align: center;
-        font-size: 15px;
-        font-weight: normal;
-        color: #ccc;
+    padding: 2px 2px 2px 2px;
+    float: left;
+    border: #37393c solid 1px;
+    cursor: pointer;
+    text-align: center;
+    font-size: 15px;
+    font-weight: normal;
+    color: #df9a08;
       }
       .tabItem:hover {
-        color: #00007f;
+        color: #000000;
       }
       .tabItem.selected {
         box-shadow: inset 1px 1px 7px -2px #555;
         color: white;
         font-weight: 400;
-        border: 1px solid #e34b4b !important;
-        background: #00007f;
+     
+        background: #df9a08;
         pointer-events: none;
       }
       .leaflet-top {
@@ -264,7 +266,7 @@
       `;
         return div;
       };
-      legend.addTo(map);
+
 
       L.control.zoom({ position: "bottomleft" }).addTo(map);
     </script>
